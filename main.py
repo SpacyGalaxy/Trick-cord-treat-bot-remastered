@@ -23,23 +23,18 @@ count = 0
 # The footer text
 FOOTER_TEXT = "In moon we goon"
 
-
 ## MUST REWORK (Temporary Solution)
 visitorTimeout = False # basically one needs to be true and one needs to be false in order to activate the timeout thingy 
 visitorTimeout2 = True
-
 
 MAX_VISITOR_TIMEOUT = 300
 MIN_VISIT_TIME = 600 #This is the variable to change the minimum random time for a visitor to appear
 MAX_VISIT_TIME = 900 #THis is the variable to change the maximum random time for a visitor to appear
 bot = discord.Bot(debug_guilds=[712452604713762837])
 
-
 @bot.event
 async def on_ready():
     print(f"{bot.user} is ready and online!")
-
-  
 
 # Command for the user to configure the bot
 @bot.slash_command(name="configure", description="Use this command to configure the entrance door",)
@@ -75,8 +70,6 @@ async def select_channel(
     cursor.close()
     db.close()
 
-
-
 @bot.command(description="Sends the bot's latency.") # this decorator makes a slash command
 async def ping(ctx): # a slash command will be created with the name "ping"
     await ctx.respond(f"Pong! Latency is {bot.latency}")
@@ -96,13 +89,10 @@ async def leaderboard(ctx):
         boardEmbed.add_field(name="------", value =f"**{index}.** <@{member}> - {score} ", inline = False)
         index += 1
 
-
     cursor.close()
     db.close()
 
-    
     await ctx.respond(embed=boardEmbed)
-    
     
 class MyDisabled(discord.ui.View):
     @discord.ui.button(label="Give a treat", row=0, style=discord.ButtonStyle.primary, emoji="🍬", disabled=True)
@@ -111,8 +101,6 @@ class MyDisabled(discord.ui.View):
     @discord.ui.button(label="Show a trick", row=0, style=discord.ButtonStyle.primary, emoji="👻", disabled=True)
     async def second_button_callback(self, button, interaction):
         print("clicked second button")
-
-
 
 class MyOptions(discord.ui.View):
     global on_timeout     
@@ -157,7 +145,6 @@ class MyOptions(discord.ui.View):
             val = (visits[0] + 1, currentVisitorID)
         cursor.execute(sql, val)
         db.commit()
-
 
         #Creates a table for keeping track of user points over time 
         ts = time.time()
@@ -206,7 +193,6 @@ class MyOptions(discord.ui.View):
             db.commit()
             #print(i)
 
- 
         cursor.close()
         db.close()
 
@@ -221,10 +207,6 @@ class MyOptions(discord.ui.View):
         await interaction.response.edit_message(embed=trickEmbed, view=self)
         visitorTimeout = False
         visitorTimeout2 = False
-
-
-
-
 
 @bot.event
 async def on_message(message):
@@ -305,9 +287,6 @@ async def on_message(message):
                     visitorTimeout2 = True
                     count += 1        
 
-                
-
-                
             cursor.close()
             db.close()
             # Resets the visitorTimeout once the timeout is done. 
@@ -316,10 +295,5 @@ async def on_message(message):
                 visitorTimeout2 = True
             #print(count)
             cooldown = False
-        
-
-
-
-
-
+    
 bot.run(TOKEN)
