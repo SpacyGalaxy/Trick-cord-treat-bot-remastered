@@ -3,3 +3,6 @@ A Discord bot similar to the 2020 Trick'ord treat bot made by Discord. Being nos
 
 # Installation
 TODO
+
+# Usage
+TODO
