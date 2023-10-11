@@ -4,6 +4,9 @@ Some improvements include:
 - Buttons instead of commands to answer the door
 - Discord applications commands instead of special character command
 
+Future improvements may include:
+- Directly add a character from Discord
+
 # Installation
 TODO
 
