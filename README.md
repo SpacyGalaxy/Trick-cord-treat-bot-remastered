@@ -3,6 +3,7 @@ A Discord bot similar to the 2020 Trick'ord treat bot made by Discord with some 
 Some improvements include:
 - Buttons instead of commands to answer the door
 - Discord applications commands instead of special character command
+- better interface?
 
 Future improvements may include:
 - Directly add a character from Discord
