@@ -50,7 +50,6 @@ async def select_channel(
     ctx: discord.ApplicationContext,
     enable: bool,
     channel: discord.TextChannel,
-
 ): 
     # connects to the database
     db = sqlite3.connect('main.sqlite')
@@ -90,10 +89,8 @@ async def leaderboard(ctx):
         score = i[1]
         boardEmbed.add_field(name="------", value =f"**{index}.** <@{member}> - {score} ", inline = False)
         index += 1
-
     cursor.close()
     db.close()
-
     await ctx.respond(embed=boardEmbed)
     
 class MyDisabled(discord.ui.View):
