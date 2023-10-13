@@ -52,7 +52,7 @@ async def select_channel(
     channel: discord.TextChannel,
 
 ): 
-
+    # connects to the database
     db = sqlite3.connect('main.sqlite')
     cursor = db.cursor()
     cursor.execute(f"SELECT channel_id FROM channel WHERE guild_id = {ctx.guild.id}")
@@ -74,6 +74,8 @@ async def select_channel(
 async def ping(ctx): # a slash command will be created with the name "ping"
     await ctx.respond(f"Pong! Latency is {bot.latency}")
 
+
+# Command to fetch the server leaderboard
 @bot.command(description="Get server leaderboard")
 async def leaderboard(ctx):
     guild_name = bot.get_guild(ctx.guild.id)
