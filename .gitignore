@@ -1,2 +1,3 @@
 main.sqlite
 .env
+.DS_Store
