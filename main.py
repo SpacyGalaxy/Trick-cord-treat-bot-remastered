@@ -1,6 +1,6 @@
 #libraries
 from re import A, M
-from this import d
+#from this import d
 from typing import Union
 from xml.dom.xmlbuilder import DOMEntityResolver
 import discord
@@ -16,7 +16,7 @@ import time
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-VISITORS_NUMBER = 13
+VISITORS_NUMBER = 3
 # Constantes and global variables
 cooldown = None
 count = 0
@@ -27,10 +27,11 @@ FOOTER_TEXT = "In moon we goon"
 visitorTimeout = False # basically one needs to be true and one needs to be false in order to activate the timeout thingy 
 visitorTimeout2 = True
 
-MAX_VISITOR_TIMEOUT = 300
-MIN_VISIT_TIME = 600 #This is the variable to change the minimum random time for a visitor to appear
-MAX_VISIT_TIME = 900 #THis is the variable to change the maximum random time for a visitor to appear
-bot = discord.Bot(debug_guilds=[712452604713762837])
+MAX_VISITOR_TIMEOUT = 60 # 300
+MIN_VISIT_TIME = 10 #This is the variable to change the minimum random time for a visitor to appear 600
+MAX_VISIT_TIME = 20 #THis is the variable to change the maximum random time for a visitor to appear 900
+# the discord server that will have access to the commands (change this later)
+bot = discord.Bot(debug_guilds=[982666098551955518])
 
 @bot.event
 async def on_ready():
