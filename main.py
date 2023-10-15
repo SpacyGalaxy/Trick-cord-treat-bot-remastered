@@ -167,7 +167,7 @@ class MyOptions(discord.ui.View):
             member = await interaction.guild.fetch_member(member_id)
             member_points = i[3]
             print(f"{member} with ID of {member_id}")
-            role = discord.utils.get(interaction.guild.roles, name = "Halloween Champion 2022")
+            role = discord.utils.get(interaction.guild.roles, name = "Halloween Champion 2023")
             
             # Sets the rank of the user based on the index
             sql = ("UPDATE main SET ranking = ? WHERE user_id = ? AND guild_id = ?")
@@ -193,7 +193,7 @@ class MyOptions(discord.ui.View):
             cursor.execute(sql, val)
             db.commit()
             #print(i)
-            
+
         cursor.close()
         db.close()
 
@@ -224,7 +224,7 @@ async def on_message(message):
 
         while count < 2:
 
-            #Puts the cooldown on and will 
+            #Puts the cooldown on
             cooldown = True
             #print(cooldown)
             time = random.randint(MIN_VISIT_TIME, MAX_VISIT_TIME)
@@ -256,8 +256,6 @@ async def on_message(message):
             rewardDescription = currentVisitor[3]
             global rewardPicture
             rewardPicture = currentVisitor[4]
-            #print(reward)
-            #print(visURL)
 
 
             embed=discord.Embed(title=f"A trick-or-treater has appeared! Its {name}!", description="Open the door and click on either options below:", color=0xff8000)
@@ -275,7 +273,6 @@ async def on_message(message):
             if visitorTimeout2 == True and visitorTimeout == False: #if the default configs are met then activate timeout sequence
                 visitorTimeout = True
                 visitorTimeout2 = True
-
 
             while visitorTimeout == True and visitorTimeout2 == True:
                 
