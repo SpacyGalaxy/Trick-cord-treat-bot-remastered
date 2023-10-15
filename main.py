@@ -193,8 +193,7 @@ class MyOptions(discord.ui.View):
             cursor.execute(sql, val)
             db.commit()
             #print(i)
-
-
+            
         cursor.close()
         db.close()
 
