@@ -164,23 +164,29 @@ class MyOptions(discord.ui.View):
         index = 1
         for i in result:
             member_id = i[0]
-            member = await interaction.guild.fetch_member(member_id)
             member_points = i[3]
-            print(f"{member} with ID of {member_id}")
-            role = discord.utils.get(interaction.guild.roles, name = "Halloween Champion 2023")
             
             # Sets the rank of the user based on the index
             sql = ("UPDATE main SET ranking = ? WHERE user_id = ? AND guild_id = ?")
             val = (index, member_id, interaction.guild.id)
             cursor.execute(sql, val)
             db.commit()
-            
+
+            index += 1
+        
+        # Refetches so that it can see if a user has passed another user
+        cursor.execute(f"SELECT user_id, winner_status, ranking, score FROM main WHERE guild_id = {interaction.guild.id} ORDER BY score DESC")
+        result = cursor.fetchall()
+        for i in result:
+            member_id = i[0]
+            member = await interaction.guild.fetch_member(member_id) # fetches member from member ID
+            role = discord.utils.get(interaction.guild.roles, name = "Halloween Champion 2023")
+            print(i[2])
             if i[2] == 1:
                 await member.add_roles(role)
-
             elif i[2] != 1:
                 await member.remove_roles(role)
-            index += 1
+
             # Checks if user column exists, if not then create one
             cursor.execute(f"PRAGMA table_info('{interaction.guild.id}')")
             column = cursor.fetchall()
