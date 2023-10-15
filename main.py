@@ -194,6 +194,7 @@ class MyOptions(discord.ui.View):
             db.commit()
             #print(i)
 
+
         cursor.close()
         db.close()
 
