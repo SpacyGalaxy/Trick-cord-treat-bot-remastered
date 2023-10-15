@@ -30,6 +30,7 @@ visitorTimeout2 = True
 MAX_VISITOR_TIMEOUT = 60 # 300
 MIN_VISIT_TIME = 10 #This is the variable to change the minimum random time for a visitor to appear 600
 MAX_VISIT_TIME = 20 #THis is the variable to change the maximum random time for a visitor to appear 900
+
 # the discord server that will have access to the commands (change this later)
 bot = discord.Bot(debug_guilds=[982666098551955518])
 
@@ -196,6 +197,7 @@ class MyOptions(discord.ui.View):
         cursor.close()
         db.close()
 
+    # Trick button
     @discord.ui.button(label="Show a trick", row=0, style=discord.ButtonStyle.primary, emoji="👻")
     async def second_button_callback(self, button, interaction):
         trickEmbed=discord.Embed(title=f"Uh oh!", description=f"It seems that your trick went too well, \n {name} was too scared and ran away!", color=0xff8000)
@@ -205,8 +207,11 @@ class MyOptions(discord.ui.View):
         for child in self.children:
             child.disabled = True
         await interaction.response.edit_message(embed=trickEmbed, view=self)
+        global visitorTimeout
+        global visitorTimeout2
         visitorTimeout = False
         visitorTimeout2 = False
+
 
 @bot.event
 async def on_message(message):
@@ -270,6 +275,7 @@ async def on_message(message):
             if visitorTimeout2 == True and visitorTimeout == False: #if the default configs are met then activate timeout sequence
                 visitorTimeout = True
                 visitorTimeout2 = True
+
 
             while visitorTimeout == True and visitorTimeout2 == True:
                 
