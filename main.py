@@ -1,8 +1,7 @@
-#libraries
-from re import A, M
-#from this import d
-from typing import Union
-from xml.dom.xmlbuilder import DOMEntityResolver
+#libraries (might have to remove some because I don't remember using some of them)
+from re import A, M # no clue what this is 
+from typing import Union #this too
+from xml.dom.xmlbuilder import DOMEntityResolver #this too
 import discord
 from discord import option
 import os #default module
@@ -16,7 +15,7 @@ import time
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-VISITORS_NUMBER = 3
+VISITORS_NUMBER = 15 # number of visitors. Might have to fix this in the future 
 # Constantes and global variables
 cooldown = None
 count = 0
@@ -27,9 +26,9 @@ FOOTER_TEXT = "In moon we goon"
 visitorTimeout = False # basically one needs to be true and one needs to be false in order to activate the timeout thingy 
 visitorTimeout2 = True
 
-MAX_VISITOR_TIMEOUT = 60 # 300
-MIN_VISIT_TIME = 10 #This is the variable to change the minimum random time for a visitor to appear 600
-MAX_VISIT_TIME = 20 #THis is the variable to change the maximum random time for a visitor to appear 900
+MAX_VISITOR_TIMEOUT = 300 # 300
+MIN_VISIT_TIME = 600 #This is the variable to change the minimum random time for a visitor to appear 600
+MAX_VISIT_TIME = 900 #THis is the variable to change the maximum random time for a visitor to appear 900
 
 # the discord server that will have access to the commands (change this later)
 bot = discord.Bot(debug_guilds=[982666098551955518])
@@ -75,7 +74,6 @@ async def select_channel(
 async def ping(ctx): # a slash command will be created with the name "ping"
     await ctx.respond(f"Pong! Latency is {bot.latency}")
 
-
 # Command to fetch the server leaderboard
 @bot.command(description="Get server leaderboard")
 async def leaderboard(ctx):
@@ -117,11 +115,11 @@ class MyOptions(discord.ui.View):
     async def first_button_callback(self, button, interaction):
         for child in self.children:
             child.disabled = True
-        treatEmbed=discord.Embed(title=f"Happy Halloween!", description=f"As a thank you for your kindness,\n they give <@{interaction.user.id}> {reward}", color=0xff8000)
+        treatEmbed=discord.Embed(title=f"Happy Halloween!", description=f"As a thank you for your kindness,\n **{name}** gives <@{interaction.user.id}> {reward}.", color=0xff8000)
         treatEmbed.set_footer(text=FOOTER_TEXT)
         treatEmbed.add_field(name="Item Description", value=f"*{rewardDescription}*", inline=False)
-        treatEmbed.set_image(url=visURL)
-        treatEmbed.set_thumbnail(url=rewardPicture)
+        treatEmbed.set_image(url=rewardPicture)
+        treatEmbed.set_thumbnail(url=visURL)
         await interaction.response.edit_message(embed=treatEmbed, view=self)
         db = sqlite3.connect("main.sqlite")
         cursor = db.cursor()
@@ -246,7 +244,6 @@ async def on_message(message):
             db.close()
             global currentVisitorID
             currentVisitorID = random.randint(1, VISITORS_NUMBER)
-            #print(currentVisitorID)
             db = sqlite3.connect('main.sqlite')
             cursor = db.cursor()
             cursor.execute(f"SELECT visitor_name, visitor_reward, visitor_pic, reward_description, reward_picture FROM visitors WHERE visitor_id = {currentVisitorID}")
@@ -262,7 +259,6 @@ async def on_message(message):
             rewardDescription = currentVisitor[3]
             global rewardPicture
             rewardPicture = currentVisitor[4]
-
 
             embed=discord.Embed(title=f"A trick-or-treater has appeared! Its {name}!", description="Open the door and click on either options below:", color=0xff8000)
             embed.set_footer(text=FOOTER_TEXT)
