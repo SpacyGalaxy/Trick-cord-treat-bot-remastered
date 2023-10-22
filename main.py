@@ -11,6 +11,11 @@ import random
 import asyncio
 import time
 
+# for generating the graph
+import matplotlib.pyplot as plt 
+import matplotlib.dates as md
+import datetime as dt 
+
 # Loads the token file 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -27,11 +32,11 @@ visitorTimeout = False # basically one needs to be true and one needs to be fals
 visitorTimeout2 = True
 
 MAX_VISITOR_TIMEOUT = 300 # 300
-MIN_VISIT_TIME = 600 #This is the variable to change the minimum random time for a visitor to appear 600
+MIN_VISIT_TIME =600 #This is the variable to change the minimum random time for a visitor to appear 600
 MAX_VISIT_TIME = 900 #THis is the variable to change the maximum random time for a visitor to appear 900
 
 # the discord server that will have access to the commands (change this later)
-bot = discord.Bot(debug_guilds=[982666098551955518])
+bot = discord.Bot(debug_guilds=[712452604713762837])
 
 @bot.event
 async def on_ready():
@@ -92,6 +97,68 @@ async def leaderboard(ctx):
     cursor.close()
     db.close()
     await ctx.respond(embed=boardEmbed)
+
+# Command to generate a graph from the points tracking
+@bot.command(description="Generate a graph of the points tracked")
+async def plot(ctx):
+    guild_name = bot.get_guild(ctx.guild.id)
+    db = sqlite3.connect('main.sqlite')
+    cursor = db.cursor()
+    plt.clf()
+
+    plt.figure(figsize=(15,10))
+
+    # Finds all of the users
+    cursor.execute(f"PRAGMA table_info('{ctx.guild_id}')")
+    columns = cursor.fetchall()
+    users = [fields[1] for fields in columns]
+
+    # fetches the time dates
+    timestamps = []
+    cursor.execute(f"SELECT unix FROM '{ctx.guild.id}'")
+    data = cursor.fetchall()
+    for date in data:
+        timestamps.append(date[0])
+
+    dates = [dt.datetime.fromtimestamp(ts) for ts in timestamps]
+    # Plots a line for each user
+    users.remove('unix') #removes the unix value since it only the time and not a user
+    
+    for i in users:
+        username = await bot.fetch_user(i)
+        cursor.execute(f"SELECT `{i}` FROM '{ctx.guild.id}'")
+        data = cursor.fetchall()
+
+        points = []
+        for row in data:
+            if row[0] is None:
+                points.append(0)
+            else:
+                points.append(row[0])
+        print(username)
+        plt.plot(dates, points, label = username)     
+
+    # the name of the graph file
+    file = discord.File("plot.png", filename="plot.png")
+
+    plt.legend()
+
+    plt.xlabel('date') 
+    plt.ylabel('points') 
+
+    plt.xticks( rotation=25 )
+    
+    # giving a title to my graph 
+    plt.title(f"{guild_name} leaderboard graph") 
+
+    ax=plt.gca()
+    xfmt = md.DateFormatter('%Y-%m-%d %H:%M:%S')
+    ax.xaxis.set_major_formatter(xfmt)
+    
+    # function to show the plot 
+    plt.savefig(fname='plot')
+
+    await ctx.respond(file=file)
     
 class MyDisabled(discord.ui.View):
     @discord.ui.button(label="Give a treat", row=0, style=discord.ButtonStyle.primary, emoji="🍬", disabled=True)
@@ -145,9 +212,8 @@ class MyOptions(discord.ui.View):
         cursor.execute(sql, val)
         db.commit()
 
-        #Creates a table for keeping track of user points over time 
         ts = time.time()
-        #print(ts)
+        #Creates a table for keeping track of user points over time 
         cursor.execute(f"CREATE TABLE IF NOT EXISTS '{interaction.guild.id}'(unix REAL)")
         cursor.execute(f"INSERT INTO '{interaction.guild.id}'(unix) VALUES (?)", (ts,))
         db.commit()
@@ -177,6 +243,7 @@ class MyOptions(discord.ui.View):
         result = cursor.fetchall()
         for i in result:
             member_id = i[0]
+            member_points = i[3]
             member = await interaction.guild.fetch_member(member_id) # fetches member from member ID
             role = discord.utils.get(interaction.guild.roles, name = "Halloween Champion 2023")
             print(i[2])
@@ -191,7 +258,7 @@ class MyOptions(discord.ui.View):
             users = [fields[1] for fields in column]
             print(users)
             if f'{member_id}' not in users:
-                cursor.execute(f"ALTER TABLE '{interaction.guild.id}' ADD COLUMN '{member_id}' TEXT")
+                cursor.execute(f"ALTER TABLE '{interaction.guild.id}' ADD COLUMN '{member_id}' NUMERIC")
             sql = (f"UPDATE '{interaction.guild.id}' SET '{member_id}' = ? WHERE unix = ?")
             val = (member_points, ts)
             cursor.execute(sql, val)
