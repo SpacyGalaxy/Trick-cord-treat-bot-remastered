@@ -32,8 +32,8 @@ visitorTimeout = False # basically one needs to be true and one needs to be fals
 visitorTimeout2 = True
 
 MAX_VISITOR_TIMEOUT = 300 # 300
-MIN_VISIT_TIME =600 #This is the variable to change the minimum random time for a visitor to appear 600
-MAX_VISIT_TIME = 900 #THis is the variable to change the maximum random time for a visitor to appear 900
+MIN_VISIT_TIME =300 #This is the variable to change the minimum random time for a visitor to appear 600
+MAX_VISIT_TIME = 600 #THis is the variable to change the maximum random time for a visitor to appear 900
 
 # the discord server that will have access to the commands (change this later)
 bot = discord.Bot(debug_guilds=[712452604713762837])
