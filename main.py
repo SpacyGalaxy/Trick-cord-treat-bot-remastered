@@ -11,7 +11,7 @@ import random
 import asyncio
 import time
 
-# for generating the graph
+# for generating the grßaph
 import matplotlib.pyplot as plt 
 import matplotlib.dates as md
 import datetime as dt 
@@ -25,18 +25,19 @@ VISITORS_NUMBER = 15 # number of visitors. Might have to fix this in the future
 cooldown = None
 count = 0
 # The footer text
-FOOTER_TEXT = "In moon we goon"
+FOOTER_TEXT = "Science allows tardigrades to be quantum entangled"
 
 ## MUST REWORK (Temporary Solution)
 visitorTimeout = False # basically one needs to be true and one needs to be false in order to activate the timeout thingy 
 visitorTimeout2 = True
 
 MAX_VISITOR_TIMEOUT = 300 # 300
-MIN_VISIT_TIME =300 #This is the variable to change the minimum random time for a visitor to appear 600
-MAX_VISIT_TIME = 600 #THis is the variable to change the maximum random time for a visitor to appear 900
+MIN_VISIT_TIME =10 #This is the variable to change the minimum random time for a visitor to appear 600
+MAX_VISIT_TIME = 20 #THis is the variable to change the maximum random time for a visitor to appear 900
 
 # the discord server that will have access to the commands (change this later)
-bot = discord.Bot(debug_guilds=[712452604713762837])
+bot = discord.Bot(debug_guilds=[982666098551955518])
+
 
 @bot.event
 async def on_ready():
@@ -171,7 +172,7 @@ class MyDisabled(discord.ui.View):
 class MyOptions(discord.ui.View):
     global on_timeout     
     async def on_timeout(self):
-        timeoutEmbed=discord.Embed(title=f"Uh oh! 💀", description=f"It seems that nobody has answered the door, \n so {name} took it personally and wrote a rant on Twitter.com", color=0xff8000)
+        timeoutEmbed=discord.Embed(title=f"Uh oh! 💀", description=f"It seems that nobody has answered the door, \n so {name} took it personally and wrote a rant on x.com", color=0xff8000)
         timeoutEmbed.set_footer(text=FOOTER_TEXT)
         timeoutEmbed.set_image(url="https://media.giphy.com/media/XIqCQx02E1U9W/giphy.gif")
         for child in self.children:
