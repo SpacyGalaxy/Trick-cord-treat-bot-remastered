@@ -25,18 +25,18 @@ VISITORS_NUMBER = 15 # number of visitors. Might have to fix this in the future
 cooldown = None
 count = 0
 # The footer text
-FOOTER_TEXT = "Science allows tardigrades to be quantum entangled"
+FOOTER_TEXT = 'This bot is sponsored by: the **Shadow Governement**'
 
 ## MUST REWORK (Temporary Solution)
 visitorTimeout = False # basically one needs to be true and one needs to be false in order to activate the timeout thingy 
 visitorTimeout2 = True
 
 MAX_VISITOR_TIMEOUT = 300 # 300
-MIN_VISIT_TIME =10 #This is the variable to change the minimum random time for a visitor to appear 600
-MAX_VISIT_TIME = 20 #THis is the variable to change the maximum random time for a visitor to appear 900
+MIN_VISIT_TIME =600 #This is the variable to change the minimum random time for a visitor to appear 600
+MAX_VISIT_TIME = 900 #THis is the variable to change the maximum random time for a visitor to appear 900
 
 # the discord server that will have access to the commands (change this later)
-bot = discord.Bot(debug_guilds=[982666098551955518])
+bot = discord.Bot(debug_guilds=[712452604713762837])
 
 
 @bot.event
@@ -160,35 +160,61 @@ async def plot(ctx):
     plt.savefig(fname='plot')
 
     await ctx.respond(file=file)
+
+# Generate Pie Chart
+@bot.command(description="Generate a pie chart of members' points")
+async def pie(ctx):
+    guild_name = bot.get_guild(ctx.guild.id)
+    db = sqlite3.connect('main.sqlite')
+    cursor = db.cursor()
+    plt.clf()
+
+    # Get user and score from database
+    cursor.execute(f"SELECT user_id, score FROM main WHERE guild_id = {ctx.guild.id} ORDER BY score DESC")
     
-class MyDisabled(discord.ui.View):
-    @discord.ui.button(label="Give a treat", row=0, style=discord.ButtonStyle.primary, emoji="🍬", disabled=True)
-    async def first_button_callback(self, button, interaction):
-        print("clicked first button")
-    @discord.ui.button(label="Show a trick", row=0, style=discord.ButtonStyle.primary, emoji="👻", disabled=True)
-    async def second_button_callback(self, button, interaction):
-        print("clicked second button")
+    pieChartUsernames = []
+    pieChartPoints = []
+    # pieChartExplode = []
 
-class MyOptions(discord.ui.View):
-    global on_timeout     
-    async def on_timeout(self):
-        timeoutEmbed=discord.Embed(title=f"Uh oh! 💀", description=f"It seems that nobody has answered the door, \n so {name} took it personally and wrote a rant on x.com", color=0xff8000)
-        timeoutEmbed.set_footer(text=FOOTER_TEXT)
-        timeoutEmbed.set_image(url="https://media.giphy.com/media/XIqCQx02E1U9W/giphy.gif")
-        for child in self.children:
-            child.disabled = True
-        await self.message.edit(embed=timeoutEmbed, view=self)
+    # place = 1
+    for i in cursor:
+        name_label = (await bot.fetch_user(i[0]))
+        pieChartUsernames.append(name_label)
+        pieChartPoints.append(i[1])
 
-    @discord.ui.button(label="Give a treat", row=0, style=discord.ButtonStyle.primary, emoji="🍬")
-    async def first_button_callback(self, button, interaction):
-        for child in self.children:
-            child.disabled = True
+    #     if place == 1:
+    #         pieChartExplode.append('0.1')
+    #     else:
+    #         pieChartExplode.append('0')
+    #     place += 1
+
+    fig, ax = plt.subplots()
+    plt.pie(pieChartPoints, labels = pieChartUsernames, autopct = '%1.1f%%', shadow=True)     
+
+    # the name of the graph file
+    file = discord.File("pie.png", filename="pie.png")
+
+    # giving a title to my graph 
+    plt.title(f"{guild_name} points pie chart") 
+    
+    # function to show the chart 
+    plt.savefig(fname='pie')
+
+    await ctx.respond(file=file)
+
+
+class treatButton(discord.ui.Button):
+    def __init__(self):
+        super().__init__(label="Give a treat", style=discord.ButtonStyle.primary, emoji="🍬")
+
+    async def callback(self, interaction: discord.Interaction):
+        self.view.disable_all_items()
         treatEmbed=discord.Embed(title=f"Happy Halloween!", description=f"As a thank you for your kindness,\n **{name}** gives <@{interaction.user.id}> {reward}.", color=0xff8000)
         treatEmbed.set_footer(text=FOOTER_TEXT)
         treatEmbed.add_field(name="Item Description", value=f"*{rewardDescription}*", inline=False)
         treatEmbed.set_image(url=rewardPicture)
         treatEmbed.set_thumbnail(url=visURL)
-        await interaction.response.edit_message(embed=treatEmbed, view=self)
+        await interaction.response.edit_message(embed=treatEmbed, view=self.view)
         db = sqlite3.connect("main.sqlite")
         cursor = db.cursor()
 
@@ -223,6 +249,7 @@ class MyOptions(discord.ui.View):
         global visitorTimeout2
         visitorTimeout = False
         visitorTimeout2 = False
+
         cursor.execute(f"SELECT user_id, winner_status, ranking, score FROM main WHERE guild_id = {interaction.guild.id} ORDER BY score DESC")
         result = cursor.fetchall()
         #print(result)
@@ -246,7 +273,7 @@ class MyOptions(discord.ui.View):
             member_id = i[0]
             member_points = i[3]
             member = await interaction.guild.fetch_member(member_id) # fetches member from member ID
-            role = discord.utils.get(interaction.guild.roles, name = "Halloween Champion 2023")
+            role = discord.utils.get(interaction.guild.roles, name = "Halloween Champion 2024")
             print(i[2])
             if i[2] == 1:
                 await member.add_roles(role)
@@ -269,21 +296,56 @@ class MyOptions(discord.ui.View):
         cursor.close()
         db.close()
 
-    # Trick button
-    @discord.ui.button(label="Show a trick", row=0, style=discord.ButtonStyle.primary, emoji="👻")
-    async def second_button_callback(self, button, interaction):
+class trickButton(discord.ui.Button):
+    def __init__(self):
+        super().__init__(label="Show a trick", style=discord.ButtonStyle.primary, emoji="👻")
+
+    async def callback(self, interaction: discord.Interaction):
         trickEmbed=discord.Embed(title=f"Uh oh!", description=f"It seems that your trick went too well, \n {name} was too scared and ran away!", color=0xff8000)
         trickEmbed.set_footer(text=FOOTER_TEXT)
         trickEmbed.set_image(url="https://thumbs.gfycat.com/BarrenNarrowEmu-size_restricted.gif")
 
-        for child in self.children:
-            child.disabled = True
-        await interaction.response.edit_message(embed=trickEmbed, view=self)
+        self.view.disable_all_items()
+        await interaction.response.edit_message(embed=trickEmbed, view=self.view)
         global visitorTimeout
         global visitorTimeout2
         visitorTimeout = False
         visitorTimeout2 = False
+    
+    
+class MyDisabled(discord.ui.View):
+    @discord.ui.button(label="Give a treat", style=discord.ButtonStyle.primary, emoji="🍬", disabled=True)
+    async def first_button_callback(self, button, interaction):
+        print("clicked first button")
+    @discord.ui.button(label="Show a trick", style=discord.ButtonStyle.primary, emoji="👻", disabled=True)
+    async def second_button_callback(self, button, interaction):
+        print("clicked second button")
 
+class MyOptions(discord.ui.View):
+    def __init__(self):
+        super().__init__()
+        if random.randint(0, 1) == 0:
+            self.add_item(trickButton())
+            self.add_item(treatButton())
+        else:
+            self.add_item(treatButton())
+            self.add_item(trickButton())
+        
+    global on_timeout     
+    async def on_timeout(self):
+        timeoutEmbed=discord.Embed(title=f"Uh oh! 💀", description=f"It seems that nobody has answered the door, \n so {name} took it personally and wrote a rant on x.com", color=0xff8000)
+        timeoutEmbed.set_footer(text=FOOTER_TEXT)
+        timeoutEmbed.set_image(url="https://media.giphy.com/media/XIqCQx02E1U9W/giphy.gif")
+        for child in self.children:
+            child.disabled = True
+        await self.message.edit(embed=timeoutEmbed, view=self)
+        global visitorTimeout, visitorTimeout2
+        visitorTimeout = False
+        visitorTimeout2 = True
+        global count
+        count+= 1
+
+    
 
 @bot.event
 async def on_message(message):
@@ -312,6 +374,7 @@ async def on_message(message):
             db.close()
             global currentVisitorID
             currentVisitorID = random.randint(1, VISITORS_NUMBER)
+
             db = sqlite3.connect('main.sqlite')
             cursor = db.cursor()
             cursor.execute(f"SELECT visitor_name, visitor_reward, visitor_pic, reward_description, reward_picture FROM visitors WHERE visitor_id = {currentVisitorID}")
@@ -334,7 +397,7 @@ async def on_message(message):
 
             channel = bot.get_channel(channelID)
 
-            msg = await channel.send(embed=embed, view=MyOptions(timeout=None))
+            msg = await channel.send(embed=embed, view=MyOptions())
 
             global visitorTimeout
             global visitorTimeout2
@@ -352,7 +415,7 @@ async def on_message(message):
                 timeoutcounter += 1
                 await asyncio.sleep(1)
                 if timeoutcounter == MAX_VISITOR_TIMEOUT:
-                    timeoutEmbed=discord.Embed(title=f"Uh oh! 💀", description=f"It seems that nobody has answered the door, \n so {name} took it personally and wrote a rant on Twitter.com", color=0xff8000)
+                    timeoutEmbed=discord.Embed(title=f"Uh oh! 💀", description=f"It seems that nobody has answered the door, \n so {name} took it personally and wrote a rant on x.com", color=0xff8000)
                     timeoutEmbed.set_footer(text=FOOTER_TEXT)
                     timeoutEmbed.set_image(url="https://media.giphy.com/media/XIqCQx02E1U9W/giphy.gif")
                     await msg.edit(embed=timeoutEmbed, view=MyDisabled())
