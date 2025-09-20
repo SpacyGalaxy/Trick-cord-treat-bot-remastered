@@ -10,7 +10,7 @@ Future improvements may include:
 - Get a graph of user scores from a command
 
 # Installation
-TODO
-
+## Using docker compose
+To install using docker compose, clone this repo and import your sqlite db file and `.env` file contaning your `discord_token` into the folder. Now run `docker compose up -d` and it should automatically start building and deploying the discord bot. 
 # Usage
 TODO
