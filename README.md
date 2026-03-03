@@ -7,7 +7,6 @@ Some improvements include:
 
 Future improvements may include:
 - Directly add a character from Discord
-- Get a graph of user scores from a command
 
 # Installation
 ## Using docker compose
