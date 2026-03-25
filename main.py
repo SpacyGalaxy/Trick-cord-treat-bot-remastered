@@ -1,5 +1,5 @@
 #libraries (might have to remove some because I don't remember using some of them)
-from re import A, M # no clue what this is 
+from re import A, M
 from typing import Union #this too
 from xml.dom.xmlbuilder import DOMEntityResolver #this too
 import discord
@@ -25,18 +25,18 @@ VISITORS_NUMBER = 15 # number of visitors. Might have to fix this in the future
 cooldown = None
 count = 0
 # The footer text
-FOOTER_TEXT = 'This bot is sponsored by: the **Shadow Governement**'
+FOOTER_TEXT = os.getenv('FOOTER_TEXT')
 
 ## MUST REWORK (Temporary Solution)
 visitorTimeout = False # basically one needs to be true and one needs to be false in order to activate the timeout thingy 
 visitorTimeout2 = True
 
-MAX_VISITOR_TIMEOUT = 300 # 300
-MIN_VISIT_TIME =600 #This is the variable to change the minimum random time for a visitor to appear 600
-MAX_VISIT_TIME = 900 #THis is the variable to change the maximum random time for a visitor to appear 900
+MAX_VISITOR_TIMEOUT = os.getenv('MAX_VISITOR_TIMEOUT')
+MIN_VISIT_TIME = os.getenv('MIN_VISIT_TIME') # minimum random time for a visitor to appear 
+MAX_VISIT_TIME = os.getenv('MAX_VISIT_TIME') #maximum random time for a visitor to appear
 
 # the discord server that will have access to the commands (change this later)
-bot = discord.Bot(debug_guilds=[712452604713762837])
+bot = discord.Bot(debug_guilds=[os.getenv('GUILD_ID')])
 
 
 @bot.event
@@ -333,7 +333,7 @@ class MyOptions(discord.ui.View):
         
     global on_timeout     
     async def on_timeout(self):
-        timeoutEmbed=discord.Embed(title=f"Uh oh! 💀", description=f"It seems that nobody has answered the door, \n so {name} took it personally and wrote a rant on x.com", color=0xff8000)
+        timeoutEmbed=discord.Embed(title=f"Uh oh! 💀", description=f"It seems that nobody has answered the door, \n so {name} took it personally and wrote a rant online!", color=0xff8000)
         timeoutEmbed.set_footer(text=FOOTER_TEXT)
         timeoutEmbed.set_image(url="https://media.giphy.com/media/XIqCQx02E1U9W/giphy.gif")
         for child in self.children:
@@ -344,8 +344,6 @@ class MyOptions(discord.ui.View):
         visitorTimeout2 = True
         global count
         count+= 1
-
-    
 
 @bot.event
 async def on_message(message):
@@ -415,7 +413,7 @@ async def on_message(message):
                 timeoutcounter += 1
                 await asyncio.sleep(1)
                 if timeoutcounter == MAX_VISITOR_TIMEOUT:
-                    timeoutEmbed=discord.Embed(title=f"Uh oh! 💀", description=f"It seems that nobody has answered the door, \n so {name} took it personally and wrote a rant on x.com", color=0xff8000)
+                    timeoutEmbed=discord.Embed(title=f"Uh oh! 💀", description=f"It seems that nobody has answered the door, \n so {name} took it personally and wrote a rant online!", color=0xff8000)
                     timeoutEmbed.set_footer(text=FOOTER_TEXT)
                     timeoutEmbed.set_image(url="https://media.giphy.com/media/XIqCQx02E1U9W/giphy.gif")
                     await msg.edit(embed=timeoutEmbed, view=MyDisabled())
